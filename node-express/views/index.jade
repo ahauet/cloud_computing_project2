@@ -4,3 +4,13 @@ block content
   h1= title
   p Welcome to #{title}
   p Welcome to the next part
+  form(method='post')
+    | First name:
+    label(for='name') Name
+    input(type='text', name='name', placeholder='Your name')
+    br
+    |   Last name:
+    label(for='email') Email address
+    input(type='text', name='email', placeholder='Your email address')
+    br
+    input(type='submit', value='Submit')
