@@ -22,10 +22,10 @@ app.post('/add_hike', hike.add_hike);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-console.log("HEY nodejs");
+
 
 app.get('/fail', function(req,res){
-  console.log("TETE DE NOEUD");
+
   var item={
     'email':{'S':"Hardcoded mail"},
     'name':{'S':"Hardcoded name"}
