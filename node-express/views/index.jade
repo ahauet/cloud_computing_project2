@@ -1,6 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p Welcome to the next part
+    .container
+        .col-md-6
+            .form-group
+              label Upload Image
+              form(method='post', action='post')
+                  .input-group
+                    span.input-group-btn
+                      span.btn.btn-default.btn-file
+                        | Browse &mldr;
+                        input#imgInp(type='file')
+                    input.form-control(type='text', readonly='')
+                    span.input-group-btn
+                      button#file-button-upload.btn.btn-default(type='submit', disabled='disabled')
+                        span.glyphicon.glyphicon-upload
+                  img#img-upload
