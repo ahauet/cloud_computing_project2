@@ -1,18 +1,21 @@
-extends layout
-
-block content
-    .container
-        .col-md-6
-            .form-group
-              label Upload Image
-              form(method='post')
-                  .input-group
-                    span.input-group-btn
-                      span.btn.btn-default.btn-file
-                        | Browse &mldr;
-                        input#imgInp(type='file')
-                    input.form-control(type='text', readonly='')
-                    span.input-group-btn
-                      button#file-button-upload.btn.btn-default(type='submit', disabled='disabled')
-                        span.glyphicon.glyphicon-upload
-                  img#img-upload
+html
+  head
+    title S3 Upload Demo
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.js')
+    script(src="js/client.js")
+    script.
+      $(function() {
+      initS3FileUpload($('#fileInput'));
+      });
+  body
+    h1 S3 Upload Demo
+    p
+      | Sorry, but you can
+      b only upload files less than a kilobyte here
+      | .
+    p
+      | Here's an image that you can use:
+    form
+      input#fileInput(type='file', name='file')
