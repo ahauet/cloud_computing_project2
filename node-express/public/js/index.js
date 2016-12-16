@@ -14,14 +14,10 @@ $(document).ready( function() {
       var input = this;
       if (input.files && input.files[0]) {
         var reader = new FileReader();
-
         reader.onload = function (e) {
           var base = e.target.result;
           $('#img-upload').attr('src', base);
-          console.log(log);
-          console.log(base);
         }
-
         reader.readAsDataURL(input.files[0]);
       }
       document.getElementById('file-button-upload').removeAttribute('disabled');

@@ -43,7 +43,7 @@ function s3UploadPolicy(config, params, credentials) {
       {acl : 'public-read'},
       { success_action_status: "201"},
       ['starts-with', '$Content-Type', ''],
-      ['content-length-range', 0, 1000],
+      ['content-length-range', 0, 1000000],
       { 'x-amz-algorithm': 'AWS4-HMAC-SHA256'},
       { 'x-amz-credential': credentials},
       {'x-amz-date': dateString() + 'T000000Z'}

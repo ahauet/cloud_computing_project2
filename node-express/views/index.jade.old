@@ -1,5 +1,13 @@
 extends layout
-
+head content
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.js')
+  script(src="js/client.js")
+  script.
+    $(function() {
+    console.log("HEY BABE");
+    initS3FileUpload($('#imgInp'));
+    console.log("HEY APE");
+    });
 block content
     .container
         .col-md-6
@@ -10,7 +18,7 @@ block content
                     span.input-group-btn
                       span.btn.btn-default.btn-file
                         | Browse &mldr;
-                        input#imgInp(type='file')
+                        input#imgInp(type='file' name='file')
                     input.form-control(type='text', readonly='')
                     span.input-group-btn
                       button#file-button-upload.btn.btn-default(type='submit', disabled='disabled')

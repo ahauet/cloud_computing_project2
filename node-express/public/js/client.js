@@ -13,6 +13,18 @@ window.initS3FileUpload = function($fileInput) {
 };
 
 function s3add(e, data){
+  //Beautiful render
+  document.getElementById("inputText").value = data.files[0].name;
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    var base = e.target.result;
+    $('#imup').attr('src', base);
+    console.log(base);
+
+  };
+  reader.readAsDataURL(data.files[0]);
+
+  //S3 part
   var filename = data.files[0].name;
   var contentType = data.files[0].type;
   var params = [];
@@ -37,5 +49,13 @@ function onS3Done(e, data){
   var s3Url = $(data.jqXHR.responseXML).find('Location').text();
   var s3Key = $(data.jqXHR.responseXML).find('Key').text();
   //DO SOMETHING TO ADD INTO DB
-  console.log($('<a/>').attr('href', s3Url).text('File uploaded at '+s3Url).appendTo($('body')));
-}
+  $("#S3URL").attr('href', s3Url).text('File uploaded at '+s3Url);
+};
+
+$(document).ready( function() {
+  $(document).on('change', '.btn-file :file', function() {
+    var input = $(this),
+    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    input.trigger('fileselect', [label]);
+  });
+});
