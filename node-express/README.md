@@ -11,3 +11,11 @@ Note : The node-express folder must have a git initiated
 
 #To open the browser
 `eb open`
+
+#To test locally
+Change the variables in the `app.js`. You just have to hardcode values inside the `nodecommand.config` (in the .ebextensions folder).
+*  accessKey : process.env.S3_ACCESS_KEY,
+*  secretKey : process.env.S3_SECRET_KEY,
+*  bucket : process.env.S3_BUCKET,
+
+Then you can just run `node bin/www`
