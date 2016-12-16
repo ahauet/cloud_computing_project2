@@ -10,13 +10,18 @@ var path = require('path');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var hike = require('./routes/hike');
-// DynamoDB stuffs
-var AWS = require('aws-sdk');
-AWS.config.region = process.env.AWS_REGION;
-var ddb = new AWS.DynamoDB();
-var ddbTable =  process.env.STARTUP_SIGNUP_TABLE;
+
+var ddb = require('./ddb.js');
+
 var s3 = require('./s3');
 var s3Config = {
+  // S3_ACCESS_KEY: AKIAJL5N6MKBEKM3BLNA
+  // S3_SECRET_KEY: 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
+  // S3_BUCKET: lingi2145-upload
+
+  // accessKey : "AKIAJL5N6MKBEKM3BLNA",
+  // secretKey : "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",
+  // bucket : "lingi2145-upload",
   accessKey : process.env.S3_ACCESS_KEY,
   secretKey : process.env.S3_SECRET_KEY,
   bucket : process.env.S3_BUCKET,
@@ -41,34 +46,13 @@ app.get('/s3_credentials', function(request, response){
   }
 });
 
-app.get('/upload?', function(req,res){
-  res.render('upload',{title:'MyUploadpage'});
-  console.log("how great");
-  console.log(req);
-
-  var item={
-    'email':{'S':"Hardcoded mail"},
-    'name':{'S':"Hardcoded name"}
-  };
-
-  ddb.putItem({
-    'TableName': ddbTable,
-    'Item': item,
-    'Expected': {email:{ Exists: false}}
-  }, function(err,data){
-      if(err){
-        var returnStatus = 500;
-        if(err.code === 'ConditionalCheckFailedException'){
-          returnStatus = 409;
-        }
-
-        res.status(returnStatus).end();
-        console.log("DynamoDB ERROR : "+err);
-      }
-      else {
-        console.log("seems legit");
-      }
-  });
+app.get('/ddb_add', function(request, response){
+  if(request.query.filename) {
+    ddb.addEntry({filename:request.query.filename, link: request.query.link });
+    response.json({seems:"legit"});
+  } else{
+    response.status(400).send("filename is required");
+  }
 });
 
 

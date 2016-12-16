@@ -17,5 +17,8 @@ Change the variables in the `app.js`. You just have to hardcode values inside th
 *  accessKey : process.env.S3_ACCESS_KEY,
 *  secretKey : process.env.S3_SECRET_KEY,
 *  bucket : process.env.S3_BUCKET,
+In the ddb.js file
+* ddbTable
+* AWS.config.region
 
 Then you can just run `node bin/www`

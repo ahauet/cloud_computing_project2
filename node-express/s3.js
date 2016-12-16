@@ -30,12 +30,11 @@ function dateString() {
 }
 
 function amzCredential(config) {
-  var ret = [config.accessKey, dateString(), config.region, 's3/aws4_request'].join('/')
-  return ret;
+  return [config.accessKey, dateString(), config.region, 's3/aws4_request'].join('/');
 }
 
 function s3UploadPolicy(config, params, credentials) {
-  var ret = {
+  return {
     expiration: new Date((new Date).getTime() + (5*60*1000)).toISOString(),
     conditions:[
       { bucket : config.bucket},
@@ -49,7 +48,6 @@ function s3UploadPolicy(config, params, credentials) {
       {'x-amz-date': dateString() + 'T000000Z'}
     ]
   };
-  return ret;
 }
 
 function hmac(key, string) {
