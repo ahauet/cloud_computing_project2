@@ -1,5 +1,30 @@
-extends layout
-
-block content
-  h1= title
-  p Welcome to #{title}
+html
+  head
+    title S3 Upload Demo
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    script(src='/js/bootstrap.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.js')
+    script(src="js/upload.js")
+    script.
+      $(function() {
+      initS3FileUpload($('#fileInput'),'#{id}');
+      });
+  body
+    h1 Welcome to the event #{eventName}
+      p Even that my ID is #{id}
+      p
+        | Sorry, but you can only upload files
+        b  less than a MegaByte here
+        | .
+      a#S3URL
+      form
+        .input-group
+          span.input-group-btn
+            span.btn.btn-default.btn-file
+              | Browse &mldr;
+              input#fileInput(type='file', name='file')
+          input#inputText.form-control(type='text', readonly='')
+      img#imup

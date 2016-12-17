@@ -6,10 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var crypto = require('crypto');
 var path = require('path');
+var TinyURL = require('tinyurl');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var hike = require('./routes/hike');
 
 var ddb = require('./ddb.js');
 
@@ -29,8 +28,6 @@ var s3Config = {
 };
 
 var app = express();
-app.get('/hikes', hike.index);
-app.post('/add_hike', hike.add_hike);
 
 
 // view engine setup
@@ -39,23 +36,39 @@ app.set('view engine', 'jade');
 
 app.get('/s3_credentials', function(request, response){
   if(request.query.filename){
-    var filename = crypto.randomBytes(16).toString('hex') + path.extname(request.query.filename);
-    response.json(s3.s3Credentials(s3Config, {filename: filename, contentType:request.query.content_type}));
+    var filename = request.query.id+"lingi2145"+crypto.randomBytes(16).toString('hex') + path.extname(request.query.filename);
+    response.json(s3.s3Credentials(s3Config, {filename: filename, contentType:request.query.content_type, id : request.query.id}));
   } else{
     response.status(400).send('filename is required');
   }
 });
 
 app.get('/ddb_add', function(request, response){
-  if(request.query.filename) {
-    ddb.addEntry({filename:request.query.filename, link: request.query.link });
+  if(request.query.id) {
+    ddb.addEntry({filename:request.query.filename, id: request.query.id, pictureId:request.query.link });
     response.json({seems:"legit"});
   } else{
     response.status(400).send("filename is required");
   }
 });
 
+app.get('/createEvent', function(request, response){
+  var newEvent = crypto.randomBytes(16).toString('hex');
+  ddb.addEvent({name:request.query.name, eventId:newEvent});
+// Get short url
+ var fullUrl = request.protocol + '://' + request.get('host') +"/event?id=";
+TinyURL.shorten(fullUrl+newEvent+"&eventname="+request.query.name, function(res) {
+  response.json({"url":res});
+});
+});
 
+app.get('/event', function(request, response){
+    console.log(request.query.id);
+    console.log(request.query.eventname);
+    response.render('upload', {id:request.query.id,
+                              "eventName" : request.query.eventname
+                            });
+});
 
 
 // uncomment after placing your favicon in /public
@@ -68,7 +81,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname+'/public'));
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

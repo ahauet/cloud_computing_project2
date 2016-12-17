@@ -17,8 +17,16 @@ Change the variables in the `app.js`. You just have to hardcode values inside th
 *  accessKey : process.env.S3_ACCESS_KEY,
 *  secretKey : process.env.S3_SECRET_KEY,
 *  bucket : process.env.S3_BUCKET,
+
 In the ddb.js file
 * ddbTable
 * AWS.config.region
 
 Then you can just run `node bin/www`
+
+#To terminate the elasticBeanstalk
+`eb terminate` then confirm in typing the environment name
+
+#Thanks
+To this article to explain how easily using S3
+https://leonid.shevtsov.me/post/demystifying-s3-browser-upload/
