@@ -65,5 +65,6 @@ function s3UploadSignature(config, policyBase64, credentials) {
 }
 
 module.exports = {
+  mac: hmac,
   s3Credentials: s3Credentials
 }

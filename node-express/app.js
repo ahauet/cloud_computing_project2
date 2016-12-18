@@ -26,6 +26,7 @@ var s3Config = {
   bucket : process.env.S3_BUCKET,
   region : "eu-west-1"
 };
+var security_KEY = "1234567890";
 
 var app = express();
 
@@ -54,20 +55,27 @@ app.get('/ddb_add', function(request, response){
 
 app.get('/createEvent', function(request, response){
   var newEvent = crypto.randomBytes(16).toString('hex');
+  var sec1 = s3.mac(security_KEY, newEvent);
+  var sec2 = s3.mac(sec1, request.query.name);
   ddb.addEvent({name:request.query.name, eventId:newEvent});
 // Get short url
  var fullUrl = request.protocol + '://' + request.get('host') +"/event?id=";
-TinyURL.shorten(fullUrl+newEvent+"&eventname="+request.query.name, function(res) {
-  response.json({"url":res});
-});
+  TinyURL.shorten(fullUrl+newEvent+"&eventname="+request.query.name+"&security="+sec2.toString('hex'), function(res) {
+    response.json({"url":res});
+  });
 });
 
+
 app.get('/event', function(request, response){
-    console.log(request.query.id);
-    console.log(request.query.eventname);
+    var sec1 = s3.mac(security_KEY, request.query.id);
+    var sec2 = s3.mac(sec1, request.query.eventname).toString('hex');
+    if (sec2 === request.query.security) {
     response.render('upload', {id:request.query.id,
                               "eventName" : request.query.eventname
                             });
+    } else{
+      response.status(404).send("Not eligible event");
+    }
 });
 
 
