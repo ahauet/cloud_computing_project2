@@ -15,11 +15,13 @@ html
   body
     h1 Welcome to the event #{eventName}
       p Even that my ID is #{id}
+      br
       p
-        | Sorry, but you can only upload files
-        b  less than a MegaByte here
+        | Sorry, but you can only upload png, jpg or zip
+        b  less than 10 MegaBytes here
         | .
       a#S3URL
+      p#S3message
       form
         .input-group
           span.input-group-btn

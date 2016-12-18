@@ -74,7 +74,7 @@ app.get('/event', function(request, response){
                               "eventName" : request.query.eventname
                             });
     } else{
-      response.status(404).send("Not eligible event");
+      response.status(403).send("Not authorized event");
     }
 });
 
