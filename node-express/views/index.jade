@@ -8,9 +8,14 @@ html
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js')
     script(src='js/index.js')
   body
-    h1 Host your event !
-    p Click on the button to create an event
-    input#inputName(type='text')
-    button#createEvent Coucou
-    p#eventId
-    a#yourEvent(target='_blank')
+    div.container
+      div.content
+        div.page-header
+          h1 Host your event !
+        div.row
+          div.col-md-10
+            p Click on the button to create an event
+            input#inputName(type='text')
+            button#createEvent Coucou
+            p#eventId
+            a#yourEvent(target='_blank')

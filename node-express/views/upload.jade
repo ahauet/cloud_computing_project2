@@ -13,20 +13,29 @@ html
       initS3FileUpload($('#fileInput'),'#{id}');
       });
   body
-    h1 Welcome to the event #{eventName}
-      p Even that my ID is #{id}
-      br
-      p
-        | Sorry, but you can only upload png, jpg or zip
-        b  less than 10 MegaBytes here
-        | .
-      a#S3URL
-      p#S3message
-      form
-        .input-group
-          span.input-group-btn
-            span.btn.btn-default.btn-file
-              | Browse &mldr;
-              input#fileInput(type='file', name='file')
-          input#inputText.form-control(type='text', readonly='')
-      img#imup
+    div.container
+      div.content
+        div.page-header
+          h1 Welcome to the event #{eventName}
+          p Even that my ID is #{id}
+          br
+          p
+            | Sorry, but you can only upload png, jpg or zip
+            b  less than 10 MegaBytes here
+            | .
+        div.row
+          div.col-md-4
+            a#S3URL
+            p#S3message
+            form
+              .input-group
+                span.input-group-btn
+                  span.btn.btn-default.btn-file
+                    | Browse &mldr;
+                    input#fileInput(type='file', name='file')
+                input#inputText.form-control(type='text', readonly='')
+            img#imup
+          div.col-md-4
+            center
+              button.btn.btn-default#downloadZip
+                span.glyphicon.glyphicon-folder-close(aria-hidden="true") Download archive

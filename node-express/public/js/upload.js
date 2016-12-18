@@ -89,4 +89,8 @@ $(document).ready( function() {
     label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
     input.trigger('fileselect', [label]);
   });
+
+  $("#downloadZip").click(function () {
+      alert("download requested");
+  });
 });
