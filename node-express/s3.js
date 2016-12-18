@@ -12,7 +12,7 @@ function s3Params(config, params){
   var policy = s3UploadPolicy(config,params,credentials);
   var policyBase64 = new Buffer(JSON.stringify(policy)).toString('base64');
   return{
-    key: params.filename,
+    key: params.id+"/"+params.filename,
     acl: 'public-read',
     success_action_status: '201',
     policy: policyBase64,
@@ -38,7 +38,7 @@ function s3UploadPolicy(config, params, credentials) {
     expiration: new Date((new Date).getTime() + (5*60*1000)).toISOString(),
     conditions:[
       { bucket : config.bucket},
-      {key : params.filename},
+      {key : params.id+"/"+params.filename},
       {acl : 'public-read'},
       { success_action_status: "201"},
       ['starts-with', '$Content-Type', ''],
