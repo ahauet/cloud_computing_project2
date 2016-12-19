@@ -3,6 +3,7 @@ var async = require('async');
 var AWS = require('aws-sdk');
 var util = require('util');
 var JSZip = require('jszip');
+var crypto = require('crypto');
 
 // get reference to S3 client
 var s3 = new AWS.S3();
@@ -23,10 +24,17 @@ exports.handler = function(event, context, callback) {
             var zip = new JSZip(data.Body);
             async.forEach(zip.files,
                 function (file) {
-                  if((file.name.substr(file.name.length-4)==".png" || file.name.substr(file.name.length-4)==".jpg" || file.name.substr(file.name.length-5)==".jpeg") && !file.name.includes('._') ){
+                  if((file.name.substr(file.name.length-4)==".png" || file.name.substr(file.name.length-4)==".jpg"|| file.name.substr(file.name.length-4)==".JPG" || file.name.substr(file.name.length-5)==".jpeg") && !file.name.includes('._') ){
+                    var extension;
+                    if(file.name.substr(file.name.length-5)==".jpeg"){
+                      extension = ".jpeg";
+                    }else{
+                      extension = file.name.substr(file.name.length-4);
+                    }
                       s3.putObject({
                           Bucket: srcBucket,
-                          Key: srcKey.substr(0,srcKey.length-4)+'/'+file.name.substr(file.name.indexOf('/')+1),
+                          Key: srcKey.substr(0,srcKey.length-4)+'/'+crypto.randomBytes(16).toString('hex')+extension,
+                          // Key: srcKey.substr(0,srcKey.length-4)+'/'+file.name.substr(file.name.indexOf('/')+1),
                           Body: new Buffer(file.asBinary(), "binary"),
                           CacheControl: 'no-cache',
                           Expires: 0
