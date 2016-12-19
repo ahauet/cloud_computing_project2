@@ -100,7 +100,6 @@ exports.handler = function(event, context, callback) {
                   }, next);
                 });
             }
-
         ], function (err) {
             if (err) {
                 console.error(

@@ -34,6 +34,14 @@ exports.handler = function(event, context, callback) {
                           if(err) {
                               context.fail(err, "unzip error");
                           }
+                          s3.deleteObject({
+                            Bucket: srcBucket,
+                            Key: srcKey
+                          }, function (err, data) {
+                            if (err) {
+                              console.log("Error while supressing old zip");
+                            }
+                          });
                       });
                   }
                 }
