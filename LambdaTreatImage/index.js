@@ -18,7 +18,6 @@ exports.handler = function(event, context, callback) {
     // Read options from the event.
     var srcBucket = event.Records[0].s3.bucket.name;
     // Object key may have spaces or unicode non-ASCII characters.
-    // var srcKey    = "logo.png";
     var srcKey    =
     decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
 
@@ -33,7 +32,6 @@ exports.handler = function(event, context, callback) {
       fileName = srcKey.substr(76,srcKey.length);
     }
 
-    console.log("received Image : "+ srcKey);
     // Infer the image type.
     var typeMatch = srcKey.match(/\.([^.]*)$/);
     if (!typeMatch) {
@@ -63,14 +61,21 @@ exports.handler = function(event, context, callback) {
                     MAX_WIDTH / size.width,
                     MAX_HEIGHT / size.height
                 );
-                var width  = scalingFactor * size.width;
-                var height = scalingFactor * size.height;
+
+                var width ;
+                var height ;
+                if(size.width < MAX_WIDTH && size.height < MAX_HEIGHT ){
+                  width = size.width;
+                  heith = size.height;
+                }else{
+                  width  = scalingFactor * size.width;
+                  height = scalingFactor * size.height;
+                }
 
                 // Transform the image buffer in memory.
                 this.resize(width, height)
                     .toBuffer(imageType, function(err, buffer) {
                         if (err) {
-                          console.log("image pas magique");
                           console.log(err);
                             next(err);
                         } else {
