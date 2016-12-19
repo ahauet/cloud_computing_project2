@@ -26,6 +26,7 @@ function s3add(e, data){
       reader.onload = function (e) {
         var base = e.target.result;
         $('#imup').attr('src', base);
+        $('#imup').attr('height',$("#colOne").width());
       };
       reader.readAsDataURL(data.files[0]);
 
