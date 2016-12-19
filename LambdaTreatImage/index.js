@@ -3,43 +3,45 @@
 // dependencies
 var async = require('async');
 var AWS = require('aws-sdk');
-var gm = require('gm').subClass({ imageMagick: true }); // Enable ImageMagick integration.
+var GGM = require('gm');
 var util = require('util');
 
+var gm = GGM.subClass({ imageMagick: true });
 // constants
-var MAX_WIDTH  = 100;
-var MAX_HEIGHT = 100;
+var MAX_WIDTH  = 1000;
+var MAX_HEIGHT = 1000;
 
 // get reference to S3 client
 var s3 = new AWS.S3();
 
 exports.handler = function(event, context, callback) {
     // Read options from the event.
-    console.log("Reading options from event:\n", util.inspect(event, {depth: 5}));
-    //var srcBucket = "lingi2145-lambda";
     var srcBucket = event.Records[0].s3.bucket.name;
     // Object key may have spaces or unicode non-ASCII characters.
     // var srcKey    = "logo.png";
     var srcKey    =
     decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
-    var dstBucket = srcBucket + "-resized";
-    var dstKey    = "resized-" + srcKey;
 
-    // Sanity check: validate that source and destination are different buckets.
-    if (srcBucket == dstBucket) {
-        callback("Source and destination buckets are the same.");
-        return;
+    var eventID
+    var fileName
+    if (srcKey.length===79){
+      eventID= srcKey.substr(10,32);
+      fileName = srcKey.substr(43,srcKey.length);
+    }
+    else{
+      eventID= srcKey.substr(10,32);
+      fileName = srcKey.substr(76,srcKey.length);
     }
 
+    console.log("received Image : "+ srcKey);
     // Infer the image type.
     var typeMatch = srcKey.match(/\.([^.]*)$/);
-    console.log("Type is = ", typeMatch);
     if (!typeMatch) {
         callback("Could not determine the image type.");
         return;
     }
     var imageType = typeMatch[1];
-    if (imageType != "jpg" && imageType != "png") {
+    if (imageType != "jpg" && imageType != "png" && imageType!="jpeg") {
         callback('Unsupported image type: ${imageType}');
         return;
     }
@@ -68,6 +70,8 @@ exports.handler = function(event, context, callback) {
                 this.resize(width, height)
                     .toBuffer(imageType, function(err, buffer) {
                         if (err) {
+                          console.log("image pas magique");
+                          console.log(err);
                             next(err);
                         } else {
                             next(null, response.ContentType, buffer);
@@ -78,8 +82,8 @@ exports.handler = function(event, context, callback) {
         function upload(contentType, data, next) {
             // Stream the transformed image to a different S3 bucket.
             s3.putObject({
-                    Bucket: dstBucket,
-                    Key: dstKey,
+                    Bucket: srcBucket,
+                    Key: eventID+'/'+fileName,
                     Body: data,
                     ContentType: contentType
                 },
@@ -88,18 +92,15 @@ exports.handler = function(event, context, callback) {
         ], function (err) {
             if (err) {
                 console.error(
-                    'Unable to resize ' + srcBucket + '/' + srcKey +
-                    ' and upload to ' + dstBucket + '/' + dstKey +
-                    ' due to an error: ' + err
+                    'Unable to resize ' + srcBucket + '/' + srcKey
                 );
             } else {
                 console.log(
-                    'Successfully resized ' + srcBucket + '/' + srcKey +
-                    ' and uploaded to ' + dstBucket + '/' + dstKey
+                    'Successfully resized ' + srcBucket + '/' + srcKey
                 );
             }
 
-            callback(null, "message");
+            callback(null, eventID+'/'+fileName);
         }
     );
 };
