@@ -23,7 +23,7 @@ exports.handler = function(event, context, callback) {
 
     var eventID
     var fileName
-    if (srcKey.length===79){
+    if (srcKey.length===79 || srcKey.length==80){
       eventID= srcKey.substr(10,32);
       fileName = srcKey.substr(43,srcKey.length);
     }
@@ -93,8 +93,14 @@ exports.handler = function(event, context, callback) {
                     Body: data,
                     ContentType: contentType
                 },
-                next);
+                function (err, data) {
+                  s3.deleteObject({
+                    Bucket: srcBucket,
+                    Key: srcKey
+                  }, next);
+                });
             }
+
         ], function (err) {
             if (err) {
                 console.error(
