@@ -15,34 +15,42 @@ exports.handler = function(event, context, callback) {
 
     var srcKey    =
     decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
-
+    var splitted = srcKey.split("/");
+    var eventName = splitted[1];
     var zip = new JSZip();
-
-    zip
-    .generateNodeStream({type:'nodebuffer',streamFiles:true})
-    .pipe(fs.createWriteStream('out.zip'))
-    .on('finish', function () {
-        console.log("out.zip written.");
-        resolve();
-    });
-
-    s3.listObjects({Bucket:srcBucket},
+    s3.listObjects({Bucket:srcBucket, Prefix:'processed/'+eventName},
         function(err,data) {
             if(err) {
-                console.log(err);
+            } else {
+                async.each(data.Contents, function(file, callback) {
+                    var params = {
+                        Bucket: srcBucket, // bucket name
+                        Key: file.Key
+                    };
+                    s3.getObject(params, function(err, data) {
+                        if(err) {
+                            console.log("getObject" + err);
+                        } else {
+                            var filesplit = file.Key.split("/");
+                            var name = filesplit[2];
+                            zip.file('/'+name, data.Body);
+                            callback();
+                        }
+                    });
+                }, function(err) {
+                    var content = zip.generate({type: 'nodebuffer'});
+                    s3.putObject({
+                        Bucket: srcBucket,
+                        Key: 'zip/'+eventName+'.zip',
+                        Body: content
+                    }, function(err, data) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log(data);
+                        }
+                    });
+                });
             }
-            var index;
-            var files = data.contents;
-            for (index = 0; index < files.length; ++index) {
-                zip.file(files[index].key);
-            }
-
-            s3.putObject({
-                Bucket: srcBucket,
-                Key: 'archive.zip',
-                Body: content
-            });
-
-        }
-    );
-}
+        });
+    }
