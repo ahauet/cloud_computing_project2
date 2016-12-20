@@ -22,8 +22,8 @@ exports.handler = function(event, context, callback) {
     .generateNodeStream({type:'nodebuffer',streamFiles:true})
     .pipe(fs.createWriteStream('out.zip'))
     .on('finish', function () {
-            console.log("out.zip written.");
-            resolve();
+        console.log("out.zip written.");
+        resolve();
     });
 
     s3.listObjects({Bucket:srcBucket},
@@ -32,22 +32,17 @@ exports.handler = function(event, context, callback) {
                 console.log(err);
             }
             var index;
-            for (index = 0; index < data.length; ++index) {
-                zip.file(data[index].key);
+            var files = data.contents;
+            for (index = 0; index < files.length; ++index) {
+                zip.file(files[index].key);
             }
-        }, function(err) {
+
             s3.putObject({
                 Bucket: srcBucket,
                 Key: 'archive.zip',
                 Body: content
-            }, function(err, data) {
-                if(err) {
-                    context.fail(err, "upload zip");
-                }
             });
+
         }
     );
-
-
-
 }
