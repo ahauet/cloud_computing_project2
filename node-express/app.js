@@ -7,20 +7,22 @@ var bodyParser = require('body-parser');
 var crypto = require('crypto');
 var path = require('path');
 var TinyURL = require('tinyurl');
-
+var AWS = require('aws-sdk');
+AWS.config.region = "eu-west-1";
 var index = require('./routes/index');
 
 var ddb = require('./ddb.js');
 
 var s3 = require('./s3');
 var s3Config = {
+
   // S3_ACCESS_KEY: AKIAJL5N6MKBEKM3BLNA
   // S3_SECRET_KEY: 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
   // S3_BUCKET: lingi2145-upload
 
   // accessKey : "AKIAJL5N6MKBEKM3BLNA",
   // secretKey : "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",
-  // bucket : "lingi2145-upload",
+//   bucket : "lingi2145-upload",
   accessKey : process.env.S3_ACCESS_KEY,
   secretKey : process.env.S3_SECRET_KEY,
   bucket : process.env.S3_BUCKET,
@@ -29,7 +31,20 @@ var s3Config = {
 var security_KEY = "1234567890";
 
 var app = express();
-
+var cdn = new AWS.CloudFront();
+cdn.listDistributions({}, function (err,data) {
+  //ATTENTION ! le role eb-ec2 doit autoriser les read only de CloudFront
+  if(err){
+    console.log(err);
+  } else {
+    for(var i=0; i< data.Items.length; i++){
+      var domainName = data.Items[i].Origins.Items[0].DomainName.split(".")[0];
+    if(domainName === s3Config.bucket){
+      process.env['CDN']=data.Items[i].DomainName;
+    }
+  }
+}
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -70,9 +85,10 @@ app.get('/event', function(request, response){
     var sec1 = s3.mac(security_KEY, request.query.id);
     var sec2 = s3.mac(sec1, request.query.eventname).toString('hex');
     if (sec2 === request.query.security) {
-    response.render('upload', {id:request.query.id,
-                              "eventName" : request.query.eventname
-                            });
+        response.render('upload', {id:request.query.id,
+                                  "eventName" : request.query.eventname,
+                                  "cdn":process.env.CDN
+                                });
     } else{
       response.status(403).send("Not authorized event");
     }
