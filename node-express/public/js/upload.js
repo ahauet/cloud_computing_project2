@@ -18,7 +18,6 @@ function s3add(e, data){
   //Beautiful render
   document.getElementById("inputText").value = data.files[0].name;
   var contentType = data.files[0].type;
-  $("#S3URL").attr('href', "").text('');
   $("#S3message").text('');
 
     if (contentType == "image/png" || contentType == "image/jpeg"){
@@ -68,8 +67,7 @@ function onS3Done(e, data){
   var s3Url = $(data.jqXHR.responseXML).find('Location').text();
   var s3Key = $(data.jqXHR.responseXML).find('Key').text();
   //DO SOMETHING TO ADD INTO DB
-  $("#S3message").text('');
-  $("#S3URL").attr('href', s3Url).text('File uploaded at '+s3Url);
+  $("#S3message").text('Your file is successfully uploaded.');
   $.ajax({
     url: '/ddb_add',
     type: 'GET',

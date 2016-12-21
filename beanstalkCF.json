@@ -1,0 +1,72 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template ElasticBeanstalk Node.jsSample: Configure and launch the AWS Elastic Beanstalk sample application. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+
+  "Resources" : {
+    "Project2145": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "ApplicationName": "Project2145",
+        "Description": "AWS Elastic Beanstalk Application"
+      }
+    },
+    "BEANSTALKAPPVERSION": {
+      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "Project2145"
+        },
+        "Description": "AWS ElasticBeanstalk Application Version",
+        "SourceBundle": {
+          "S3Bucket": "lingi2145-resources",
+          "S3Key": "node-express.zip"
+        }
+      }
+    },
+    "BEANSTALKTEMPLATE": {
+      "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "Project2145"
+        },
+        "Description": "AWS ElasticBeanstalk Configuration Template",
+        "OptionSettings": [
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MinSize",
+            "Value": "1"
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MaxSize",
+            "Value": "3"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "LoadBalanced"
+          }
+        ],
+        "SolutionStackName": "64bit Amazon Linux 2016.09 v3.2.0 running Node.js"
+      }
+    },
+    "BEANSTALKENVIRONMENT": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "Project2145"
+        },
+        "Description": "AWS ElasticBeanstalk Sample Environment",
+        "TemplateName": {
+          "Ref": "BEANSTALKTEMPLATE"
+        },
+        "VersionLabel": {
+          "Ref": "BEANSTALKAPPVERSION"
+        },
+        "CNAMEPrefix" : "lingi2145-app"
+      }
+    }
+  }
+}
