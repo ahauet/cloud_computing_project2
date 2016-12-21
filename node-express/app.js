@@ -11,21 +11,14 @@ var AWS = require('aws-sdk');
 AWS.config.region = "eu-west-1";
 var index = require('./routes/index');
 
-var ddb = require('./ddb.js');
-
 var s3 = require('./s3');
 var s3Config = {
-
-  // S3_ACCESS_KEY: AKIAJL5N6MKBEKM3BLNA
-  // S3_SECRET_KEY: 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
-  // S3_BUCKET: lingi2145-upload
-
-  // accessKey : "AKIAJL5N6MKBEKM3BLNA",
-  // secretKey : "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",
-//   bucket : "lingi2145-upload",
-  accessKey : process.env.S3_ACCESS_KEY,
-  secretKey : process.env.S3_SECRET_KEY,
-  bucket : process.env.S3_BUCKET,
+  accessKey : "AKIAJL5N6MKBEKM3BLNA",
+  secretKey : "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",
+  bucket : "lingi2145-upload",
+  // accessKey : process.env.S3_ACCESS_KEY,
+  // secretKey : process.env.S3_SECRET_KEY,
+  // bucket : process.env.S3_BUCKET,
   region : "eu-west-1"
 };
 var security_KEY = "1234567890";
@@ -59,20 +52,11 @@ app.get('/s3_credentials', function(request, response){
   }
 });
 
-app.get('/ddb_add', function(request, response){
-  if(request.query.id) {
-    ddb.addEntry({filename:request.query.filename, id: request.query.id, pictureId:request.query.link });
-    response.json({seems:"legit"});
-  } else{
-    response.status(400).send("filename is required");
-  }
-});
 
 app.get('/createEvent', function(request, response){
   var newEvent = crypto.randomBytes(16).toString('hex');
   var sec1 = s3.mac(security_KEY, newEvent);
   var sec2 = s3.mac(sec1, request.query.name);
-  ddb.addEvent({name:request.query.name, eventId:newEvent});
 // Get short url
  var fullUrl = request.protocol + '://' + request.get('host') +"/event?id=";
   TinyURL.shorten(fullUrl+newEvent+"&eventname="+request.query.name+"&security="+sec2.toString('hex'), function(res) {

@@ -66,20 +66,7 @@ function s3add(e, data){
 function onS3Done(e, data){
   var s3Url = $(data.jqXHR.responseXML).find('Location').text();
   var s3Key = $(data.jqXHR.responseXML).find('Key').text();
-  //DO SOMETHING TO ADD INTO DB
   $("#S3message").text('Your file is successfully uploaded.');
-  $.ajax({
-    url: '/ddb_add',
-    type: 'GET',
-    dataType : 'json',
-    data: {
-      id : eventId,
-      filename: data.originalFiles[0].name,
-      link: s3Url.replace(/\\/g, '/').replace(/.*\//, '')
-    },
-    success:function(data){//NOTHING TODO HERE ?
-    }
-  });
 };
 
 $(document).ready( function() {
