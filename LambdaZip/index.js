@@ -46,8 +46,8 @@ exports.handler = function(event, context, callback) {
                     }, function(err, data) {
                         if (err) {
                             console.log(err);
-                        } else {
-                            console.log(data);
+                        // } else {
+                        //     console.log(data);
                         }
                     });
                 });

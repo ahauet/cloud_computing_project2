@@ -21,16 +21,19 @@ exports.handler = function(event, context, callback) {
     var srcKey    =
     decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
 
-    var eventID
-    var fileName
-    if (srcKey.length===79 || srcKey.length==80){
-      eventID= srcKey.substr(10,32);
-      fileName = srcKey.substr(43,srcKey.length);
-    }
-    else{
-      eventID= srcKey.substr(10,32);
-      fileName = srcKey.substr(76,srcKey.length);
-    }
+    var splitted = srcKey.split("/");
+    var eventID = splitted[1];
+    var ind = splitted.length-1;
+    var fileName = splitted[ind];
+
+    // if (srcKey.length===79 || srcKey.length==80){
+    //   eventID= srcKey.substr(10,32);
+    //   fileName = srcKey.substr(43,srcKey.length);
+    // }
+    // else{
+    //   eventID= srcKey.substr(10,32);
+    //   fileName = srcKey.substr(76,srcKey.length);
+    // }
 
     // Infer the image type.
     var typeMatch = srcKey.match(/\.([^.]*)$/);
@@ -89,7 +92,7 @@ exports.handler = function(event, context, callback) {
             // Stream the transformed image to a different S3 bucket.
             s3.putObject({
                     Bucket: srcBucket,
-                    Key: eventID+'/'+fileName,
+                    Key: 'processed/'+eventID+'/'+fileName,
                     Body: data,
                     ContentType: contentType
                 },

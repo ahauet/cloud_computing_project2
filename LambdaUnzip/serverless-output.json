@@ -1,0 +1,49 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Unzip Lambda in order to unzip zipfiles uploaded on an S3",
+  "Resources": {
+    "Bucket1": {
+      "Type": "AWS::S3::Bucket"
+    },
+    "unZip": {
+      "Properties": {
+        "CodeUri": "s3://lingi2145-resources/b5288268204b40344e08658b2294b91a",
+        "Description": "Unzip Lambda in order to unzip zipfiles uploaded on an S3",
+        "Events": {
+          "BucketEvent1": {
+            "Properties": {
+              "Bucket": {
+                "Ref": "Bucket1"
+              },
+              "Events": [
+                "s3:ObjectCreated:*"
+              ],
+              "Filter": {
+                "S3Key": {
+                  "Rules": [
+                    {
+                      "Name": "prefix",
+                      "Value": "untreated"
+                    },
+                    {
+                      "Name": "suffix",
+                      "Value": ".zip"
+                    }
+                  ]
+                }
+              }
+            },
+            "Type": "S3"
+          }
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": "arn:aws:iam::828843326560:role/Lambda-role",
+        "Runtime": "nodejs4.3",
+        "Timeout": 10
+      },
+      "Type": "AWS::Serverless::Function"
+    }
+  },
+  "Transform": "AWS::Serverless-2016-10-31"
+}
