@@ -163,7 +163,7 @@
         "CorsConfiguration" : {
           "CorsRules" : [{
             "AllowedHeaders": ["*"],
-            "AllowedOrigins" : ["http://*"],
+            "AllowedOrigins" : ["http://*", "https://*"],
             "AllowedMethods" : ["GET", "PUT", "POST", "HEAD" ],
             "ExposedHeaders" : ["Access-Control-Allow-Origin"]
             }]
