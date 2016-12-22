@@ -152,6 +152,14 @@
     "StorageBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
+        "CorsConfiguration" : {
+          "CorsRules" : [{
+            "AllowedHeaders": ["*"],
+            "AllowedOrigins" : ["http://*"],
+            "AllowedMethods" : ["GET", "PUT", "POST", "HEAD" ],
+            "ExposedHeaders" : ["Access-Control-Allow-Origin"]
+            }]
+        },
         "NotificationConfiguration": {
           "LambdaConfigurations": [
             {

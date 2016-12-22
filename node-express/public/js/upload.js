@@ -1,7 +1,6 @@
 var acceptFileType = /.*/i;
 var maxFileSize = 1000;
 var credentialsUrl = '/s3_credentials';
-var uploadUrl = '/upload';
 var eventId;
 
 window.initS3FileUpload = function($fileInput, id) {
