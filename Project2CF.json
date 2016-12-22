@@ -73,7 +73,15 @@
             "Namespace": "aws:elasticbeanstalk:application:environment:",
             "OptionName": "S3_BUCKET",
             "Value": {"Ref" : "BucketNameParameter"}
-          }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment:",
+            "OptionName": "CDN",
+            "Value": {"Fn::GetAtt": [
+              "myDistribution",
+              "DomainName"
+            ]}
+          },
 
         ],
         "SolutionStackName": "64bit Amazon Linux 2016.09 v3.2.0 running Node.js"
@@ -159,407 +167,436 @@
             "AllowedMethods" : ["GET", "PUT", "POST", "HEAD" ],
             "ExposedHeaders" : ["Access-Control-Allow-Origin"]
             }]
+          },
+          "NotificationConfiguration": {
+            "LambdaConfigurations": [
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "TreatImageCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "untreated/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".jpg"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "TreatImageCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "untreated/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".png"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "TreatImageCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "untreated/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".jpeg"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "TreatImageCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "untreated/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".JPG"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "unZipCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "untreated"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".zip"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "ZipperCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "processed/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".jpg"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "ZipperCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "processed/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".JPG"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "ZipperCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "processed/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".png"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              },
+              {
+                "Function": {
+                  "Fn::GetAtt": [
+                    "ZipperCF",
+                    "Arn"
+                  ]
+                },
+                "Filter": {
+                  "S3Key": {
+                    "Rules": [
+                      {
+                        "Name": "prefix",
+                        "Value": "processed/"
+                      },
+                      {
+                        "Name": "suffix",
+                        "Value": ".jpeg"
+                      }
+                    ]
+                  }
+                },
+                "Event": "s3:ObjectCreated:*"
+              }
+            ]
+          },
+          "BucketName": {"Ref" : "BucketNameParameter"}
         },
-        "NotificationConfiguration": {
-          "LambdaConfigurations": [
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "TreatImageCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "untreated/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".jpg"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "TreatImageCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "untreated/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".png"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "TreatImageCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "untreated/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".jpeg"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "TreatImageCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "untreated/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".JPG"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "unZipCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "untreated"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".zip"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "ZipperCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "processed/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".jpg"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "ZipperCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "processed/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".JPG"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "ZipperCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "processed/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".png"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
-            },
-            {
-              "Function": {
-                "Fn::GetAtt": [
-                  "ZipperCF",
-                  "Arn"
-                ]
-              },
-              "Filter": {
-                "S3Key": {
-                  "Rules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "processed/"
-                    },
-                    {
-                      "Name": "suffix",
-                      "Value": ".jpeg"
-                    }
-                  ]
-                }
-              },
-              "Event": "s3:ObjectCreated:*"
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "47f9744a-9b26-4670-83d7-c6ae6937e995"
+          }
+        }
+      },
+      "ZipperCF": {
+        "Type": "AWS::Lambda::Function",
+        "Properties": {
+          "Code": {
+            "S3Bucket": "lingi2145-resources",
+            "S3Key": "272d296c608532a3f5f44f709b8d76db"
+          },
+          "Description": "Zip all files given by a directory",
+          "MemorySize": 128,
+          "Handler": "index.handler",
+          "Role": "arn:aws:iam::828843326560:role/Lambda-role",
+          "Timeout": 54,
+          "Runtime": "nodejs4.3"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "f9cb1238-8ce9-4d44-b18a-9024c92764dd"
+          }
+        }
+      },
+      "unZipCFBucketEvent1Permission": {
+        "Type": "AWS::Lambda::Permission",
+        "Properties": {
+          "Action": "lambda:invokeFunction",
+          "SourceAccount": {
+            "Ref": "AWS::AccountId"
+          },
+          "FunctionName": {
+            "Ref": "unZipCF"
+          },
+          "Principal": "s3.amazonaws.com"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "98f576a0-b70f-4e7e-856f-cba9a40d100f"
+          }
+        }
+      },
+      "TreatImageCFBucketEvent3Permission": {
+        "Type": "AWS::Lambda::Permission",
+        "Properties": {
+          "Action": "lambda:invokeFunction",
+          "SourceAccount": {
+            "Ref": "AWS::AccountId"
+          },
+          "FunctionName": {
+            "Ref": "TreatImageCF"
+          },
+          "Principal": "s3.amazonaws.com"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "567a6aea-5292-4547-9cd9-f17b505bbca7"
+          }
+        }
+      },
+      "TreatImageCF": {
+        "Type": "AWS::Lambda::Function",
+        "Properties": {
+          "Code": {
+            "S3Bucket": "lingi2145-resources",
+            "S3Key": "e6977f7fd97616866211254a2bd55866"
+          },
+          "Description": "This lambda process the image in order to resize it",
+          "MemorySize": 192,
+          "Handler": "index.handler",
+          "Role": "arn:aws:iam::828843326560:role/Lambda-role",
+          "Timeout": 15,
+          "Runtime": "nodejs4.3"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "f90b3707-d940-4649-ab42-dd483b6c8d7f"
+          }
+        }
+      },
+      "unZipCF": {
+        "Type": "AWS::Lambda::Function",
+        "Properties": {
+          "Code": {
+            "S3Bucket": "lingi2145-resources",
+            "S3Key": "b5288268204b40344e08658b2294b91a"
+          },
+          "Description": "Unzip Lambda in order to unzip zipfiles uploaded on an S3",
+          "MemorySize": 128,
+          "Handler": "index.handler",
+          "Role": "arn:aws:iam::828843326560:role/Lambda-role",
+          "Timeout": 10,
+          "Runtime": "nodejs4.3"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "f1d6ae74-ac89-4985-a5aa-cd1d5d922626"
+          }
+        }
+      },
+      "TreatImageCFBucketEvent2Permission": {
+        "Type": "AWS::Lambda::Permission",
+        "Properties": {
+          "Action": "lambda:invokeFunction",
+          "SourceAccount": {
+            "Ref": "AWS::AccountId"
+          },
+          "FunctionName": {
+            "Ref": "TreatImageCF"
+          },
+          "Principal": "s3.amazonaws.com"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "dae780a8-32eb-4330-aa20-517e7f53382e"
+          }
+        }
+      },
+      "ZipperCFBucketEvent4Permission": {
+        "Type": "AWS::Lambda::Permission",
+        "Properties": {
+          "Action": "lambda:invokeFunction",
+          "SourceAccount": {
+            "Ref": "AWS::AccountId"
+          },
+          "FunctionName": {
+            "Ref": "ZipperCF"
+          },
+          "Principal": "s3.amazonaws.com"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "fd032bcd-8abb-4fc0-a550-15621a3e0ce9"
+          }
+        }
+      },
+      "ZipperCFBucketEvent1Permission": {
+        "Type": "AWS::Lambda::Permission",
+        "Properties": {
+          "Action": "lambda:invokeFunction",
+          "SourceAccount": {
+            "Ref": "AWS::AccountId"
+          },
+          "FunctionName": {
+            "Ref": "ZipperCF"
+          },
+          "Principal": "s3.amazonaws.com"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "90ef8c74-08b9-4e95-b556-a62448bbb8e7"
+          }
+        }
+      },
+      "ZipperCFBucketEvent2Permission": {
+        "Type": "AWS::Lambda::Permission",
+        "Properties": {
+          "Action": "lambda:invokeFunction",
+          "SourceAccount": {
+            "Ref": "AWS::AccountId"
+          },
+          "FunctionName": {
+            "Ref": "ZipperCF"
+          },
+          "Principal": "s3.amazonaws.com"
+        },
+        "Metadata": {
+          "AWS::CloudFormation::Designer": {
+            "id": "d195c0f1-27b2-4da8-af2f-c03e621fd50f"
+          }
+        }
+      },
+      "SampleBucketPolicy" : {
+        "Type" : "AWS::S3::BucketPolicy",
+        "Properties" : {
+          "Bucket" : {"Ref" : "BucketNameParameter"},
+          "PolicyDocument": {
+            "Statement":[{
+              "Action":"s3:*",
+              "Effect":"Allow",
+              "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "BucketNameParameter"} , "/*" ]]},
+              "Principal":"*"
+              }]
             }
-          ]
+          }
         },
-        "BucketName": {"Ref" : "BucketNameParameter"}
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "47f9744a-9b26-4670-83d7-c6ae6937e995"
-        }
-      }
-    },
-    "ZipperCF": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": "lingi2145-resources",
-          "S3Key": "272d296c608532a3f5f44f709b8d76db"
-        },
-        "Description": "Zip all files given by a directory",
-        "MemorySize": 128,
-        "Handler": "index.handler",
-        "Role": "arn:aws:iam::828843326560:role/Lambda-role",
-        "Timeout": 54,
-        "Runtime": "nodejs4.3"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "f9cb1238-8ce9-4d44-b18a-9024c92764dd"
-        }
-      }
-    },
-    "unZipCFBucketEvent1Permission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:invokeFunction",
-        "SourceAccount": {
-          "Ref": "AWS::AccountId"
-        },
-        "FunctionName": {
-          "Ref": "unZipCF"
-        },
-        "Principal": "s3.amazonaws.com"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "98f576a0-b70f-4e7e-856f-cba9a40d100f"
-        }
-      }
-    },
-    "TreatImageCFBucketEvent3Permission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:invokeFunction",
-        "SourceAccount": {
-          "Ref": "AWS::AccountId"
-        },
-        "FunctionName": {
-          "Ref": "TreatImageCF"
-        },
-        "Principal": "s3.amazonaws.com"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "567a6aea-5292-4547-9cd9-f17b505bbca7"
-        }
-      }
-    },
-    "TreatImageCF": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": "lingi2145-resources",
-          "S3Key": "e6977f7fd97616866211254a2bd55866"
-        },
-        "Description": "This lambda process the image in order to resize it",
-        "MemorySize": 192,
-        "Handler": "index.handler",
-        "Role": "arn:aws:iam::828843326560:role/Lambda-role",
-        "Timeout": 15,
-        "Runtime": "nodejs4.3"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "f90b3707-d940-4649-ab42-dd483b6c8d7f"
-        }
-      }
-    },
-    "unZipCF": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": "lingi2145-resources",
-          "S3Key": "b5288268204b40344e08658b2294b91a"
-        },
-        "Description": "Unzip Lambda in order to unzip zipfiles uploaded on an S3",
-        "MemorySize": 128,
-        "Handler": "index.handler",
-        "Role": "arn:aws:iam::828843326560:role/Lambda-role",
-        "Timeout": 10,
-        "Runtime": "nodejs4.3"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "f1d6ae74-ac89-4985-a5aa-cd1d5d922626"
-        }
-      }
-    },
-    "TreatImageCFBucketEvent2Permission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:invokeFunction",
-        "SourceAccount": {
-          "Ref": "AWS::AccountId"
-        },
-        "FunctionName": {
-          "Ref": "TreatImageCF"
-        },
-        "Principal": "s3.amazonaws.com"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "dae780a8-32eb-4330-aa20-517e7f53382e"
-        }
-      }
-    },
-    "ZipperCFBucketEvent4Permission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:invokeFunction",
-        "SourceAccount": {
-          "Ref": "AWS::AccountId"
-        },
-        "FunctionName": {
-          "Ref": "ZipperCF"
-        },
-        "Principal": "s3.amazonaws.com"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "fd032bcd-8abb-4fc0-a550-15621a3e0ce9"
-        }
-      }
-    },
-    "ZipperCFBucketEvent1Permission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:invokeFunction",
-        "SourceAccount": {
-          "Ref": "AWS::AccountId"
-        },
-        "FunctionName": {
-          "Ref": "ZipperCF"
-        },
-        "Principal": "s3.amazonaws.com"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "90ef8c74-08b9-4e95-b556-a62448bbb8e7"
-        }
-      }
-    },
-    "ZipperCFBucketEvent2Permission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:invokeFunction",
-        "SourceAccount": {
-          "Ref": "AWS::AccountId"
-        },
-        "FunctionName": {
-          "Ref": "ZipperCF"
-        },
-        "Principal": "s3.amazonaws.com"
-      },
-      "Metadata": {
-        "AWS::CloudFormation::Designer": {
-          "id": "d195c0f1-27b2-4da8-af2f-c03e621fd50f"
-        }
-      }
-    },
-    "SampleBucketPolicy" : {
-      "Type" : "AWS::S3::BucketPolicy",
-      "Properties" : {
-        "Bucket" : {"Ref" : "BucketNameParameter"},
-        "PolicyDocument": {
-          "Statement":[{
-            "Action":"s3:*",
-            "Effect":"Allow",
-            "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "BucketNameParameter"} , "/*" ]]},
-            "Principal":"*"
-            }]
+        "myDistribution" : {
+          "Type" : "AWS::CloudFront::Distribution",
+          "Properties" : {
+            "DistributionConfig" : {
+              "Origins" : [ {
+                "DomainName" : {
+                  "Fn::GetAtt": [
+                    "StorageBucket",
+                    "DomainName"
+                  ]},
+                "Id" : "myS3Origin",
+                "S3OriginConfig" : {
+                  "OriginAccessIdentity" : ""
+                }
+                }],
+                "Enabled" : "true",
+                "Comment" : "Distribution linked to the bucket of the web app.",
+                "DefaultCacheBehavior" : {
+                  "AllowedMethods" : ["GET", "HEAD"],
+                  "TargetOriginId" : "myS3Origin",
+                  "ForwardedValues" : {
+                    "QueryString" : "false",
+                    "Cookies" : { "Forward" : "none" }
+                  },
+                  "ViewerProtocolPolicy" : "allow-all"
+                }
+              }
+            }
           }
         }
       }
-    }
-  }
