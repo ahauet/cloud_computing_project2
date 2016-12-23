@@ -1,3 +1,5 @@
+//This file contains all the needed script in order to receive S3 temporary credentials.
+//SOURCE : https://leonid.shevtsov.me/post/demystifying-s3-browser-upload/
 var crypto = require('crypto');
 
 function s3Credentials(config,params) {
@@ -56,6 +58,7 @@ function hmac(key, string) {
   return hmac.read();
 }
 
+//Required AWS signature.
 function s3UploadSignature(config, policyBase64, credentials) {
   var dateKey = hmac('AWS4'+config.secretKey, dateString());
   var dateRegionKey = hmac(dateKey, config.region);

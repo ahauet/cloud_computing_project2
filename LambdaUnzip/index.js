@@ -22,6 +22,7 @@ exports.handler = function(event, context, callback) {
             }
 
             var zip = new JSZip(data.Body);
+            //Treat each file inside the zip
             async.forEach(zip.files,
                 function (file) {
                   if((file.name.substr(file.name.length-4)==".png" || file.name.substr(file.name.length-4)==".jpg"|| file.name.substr(file.name.length-4)==".JPG" || file.name.substr(file.name.length-5)==".jpeg") && !file.name.includes('._') ){
@@ -31,6 +32,7 @@ exports.handler = function(event, context, callback) {
                     }else{
                       extension = file.name.substr(file.name.length-4);
                     }
+                      //Only upload the images files.
                       s3.putObject({
                           Bucket: srcBucket,
                           Key: srcKey.substr(0,srcKey.length-4)+'/'+crypto.randomBytes(16).toString('hex')+extension,

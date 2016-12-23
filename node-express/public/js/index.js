@@ -1,3 +1,4 @@
+//This file contains the javascript needed from the first page of the app.
 $(document).ready( function() {
   $("#createEvent").click(function () {
     var eventName = $("#inputName").val();

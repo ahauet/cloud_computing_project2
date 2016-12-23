@@ -1,5 +1,4 @@
-var acceptFileType = /.*/i;
-var maxFileSize = 1000;
+//This file contains all the javascript needed for the event parts like upload a file our download the zip.
 var credentialsUrl = '/s3_credentials';
 var eventId;
 
@@ -19,6 +18,7 @@ function s3add(e, data){
   var contentType = data.files[0].type;
   $("#S3message").text('');
 
+    //Render the uploaded file if it's an image.
     if (contentType == "image/png" || contentType == "image/jpeg"){
       var reader = new FileReader();
       reader.onload = function (e) {
@@ -33,7 +33,7 @@ function s3add(e, data){
   }
 
 
-  //S3 part
+  //S3 part, send an ajax Query with temporary S3 credentials.
   var filename = data.files[0].name;
   if (contentType == "image/png" || contentType == "image/jpeg" || contentType == "application/zip") {
     var params = [];
@@ -48,6 +48,7 @@ function s3add(e, data){
         content_type: contentType
       },
       success:function(s3Data){
+        //When teh query retrieve the credentials, the browser send to S3.
         data.url = s3Data.endpoint_url;
         data.formData = s3Data.params;
         data.submit();
@@ -56,6 +57,7 @@ function s3add(e, data){
     return params;
   }
   else {
+    //Send alarm if file is not supported.
     $("#S3message").text('Fichier non supporté. Uniquement png/zip/jpg');
     return []
   }
@@ -63,8 +65,7 @@ function s3add(e, data){
 };
 
 function onS3Done(e, data){
-  var s3Url = $(data.jqXHR.responseXML).find('Location').text();
-  var s3Key = $(data.jqXHR.responseXML).find('Key').text();
+  //Sucessful message.
   $("#S3message").text('Your file is successfully uploaded.');
 };
 

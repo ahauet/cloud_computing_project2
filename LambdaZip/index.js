@@ -18,6 +18,7 @@ exports.handler = function(event, context, callback) {
     var splitted = srcKey.split("/");
     var eventName = splitted[1];
     var zip = new JSZip();
+    //Get reference for each available object
     s3.listObjects({Bucket:srcBucket, Prefix:'processed/'+eventName},
         function(err,data) {
             if(err) {
@@ -27,18 +28,21 @@ exports.handler = function(event, context, callback) {
                         Bucket: srcBucket, // bucket name
                         Key: file.Key
                     };
+                    //Get the object
                     s3.getObject(params, function(err, data) {
                         if(err) {
                             console.log("getObject" + err);
                         } else {
                             var filesplit = file.Key.split("/");
                             var name = filesplit[2];
+                            //Add object to zip
                             zip.file('/'+name, data.Body);
                             callback();
                         }
                     });
                 }, function(err) {
                     var content = zip.generate({type: 'nodebuffer'});
+                    //Finally upload the zip
                     s3.putObject({
                         Bucket: srcBucket,
                         Key: 'zip/'+eventName+'.zip',

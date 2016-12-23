@@ -10,12 +10,14 @@ var TinyURL = require('tinyurl');
 var index = require('./routes/index');
 
 var s3 = require('./s3');
+//BY DEFAULT eu-west-1 region.
 var s3Config = {
   accessKey : process.env.S3_ACCESS_KEY,
   secretKey : process.env.S3_SECRET_KEY,
   bucket : process.env.S3_BUCKET,
   region : "eu-west-1"
 };
+//THIS KEY SHOULD BE RANDOMIZED ONLY ONCE AT THE BEGINNING OF THE PROD VERSION !
 var security_KEY = "1234567890";
 
 var app = express();
@@ -24,6 +26,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+//The server respond with the S3 credentials to allow browser to upload to S3.
 app.get('/s3_credentials', function(request, response){
   if(request.query.filename){
     var filename = crypto.randomBytes(16).toString('hex') + path.extname(request.query.filename);
@@ -34,6 +37,7 @@ app.get('/s3_credentials', function(request, response){
 });
 
 
+//The server respond with the TinyURL of the corresponding event.
 app.get('/createEvent', function(request, response){
   var newEvent = crypto.randomBytes(16).toString('hex');
   var sec1 = s3.mac(security_KEY, newEvent);
@@ -49,6 +53,7 @@ app.get('/createEvent', function(request, response){
 app.get('/event', function(request, response){
     var sec1 = s3.mac(security_KEY, request.query.id);
     var sec2 = s3.mac(sec1, request.query.eventname).toString('hex');
+    //We must verify that the url is valid with the security field.
     if (sec2 === request.query.security) {
         response.render('upload', {id:request.query.id,
                                   "eventName" : request.query.eventname,

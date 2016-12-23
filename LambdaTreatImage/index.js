@@ -26,15 +26,6 @@ exports.handler = function(event, context, callback) {
     var ind = splitted.length-1;
     var fileName = splitted[ind];
 
-    // if (srcKey.length===79 || srcKey.length==80){
-    //   eventID= srcKey.substr(10,32);
-    //   fileName = srcKey.substr(43,srcKey.length);
-    // }
-    // else{
-    //   eventID= srcKey.substr(10,32);
-    //   fileName = srcKey.substr(76,srcKey.length);
-    // }
-
     // Infer the image type.
     var typeMatch = srcKey.match(/\.([^.]*)$/);
     if (!typeMatch) {

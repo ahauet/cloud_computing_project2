@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template ElasticBeanstalk Node.jsSample: Configure and launch the AWS Elastic Beanstalk sample application. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "CloudFormation template to create the lingi2145 project2 web application. The result of this stack is a web application hosted by ElasticBeanstalk at the URL CNAMEPrefix.region.elasticbeanstalk.com",
 
   "Parameters" : {
     "BucketNameParameter" : {
