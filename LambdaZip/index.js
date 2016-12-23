@@ -41,6 +41,11 @@ exports.handler = function(event, context, callback) {
                         }
                     });
                 }, function(err) {
+                  if(err){
+                    console.error("unable to create Zip");
+                    //Here we should call again the same lambda with the same event.
+                  }
+                  else{
                     var content = zip.generate({type: 'nodebuffer'});
                     //Finally upload the zip
                     s3.putObject({
@@ -54,6 +59,7 @@ exports.handler = function(event, context, callback) {
                         //     console.log(data);
                         }
                     });
+                  }
                 });
             }
         });
