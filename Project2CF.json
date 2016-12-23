@@ -81,7 +81,7 @@
               "myDistribution",
               "DomainName"
             ]}
-          },
+          }
 
         ],
         "SolutionStackName": "64bit Amazon Linux 2016.09 v3.2.0 running Node.js"
