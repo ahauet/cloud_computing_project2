@@ -10,12 +10,11 @@ var TinyURL = require('tinyurl');
 var index = require('./routes/index');
 
 var s3 = require('./s3');
-//BY DEFAULT eu-west-1 region.
 var s3Config = {
   accessKey : process.env.S3_ACCESS_KEY,
   secretKey : process.env.S3_SECRET_KEY,
   bucket : process.env.S3_BUCKET,
-  region : "eu-west-1"
+  region : process.env.AWS_REGION
 };
 //THIS KEY SHOULD BE RANDOMIZED ONLY ONCE AT THE BEGINNING OF THE PROD VERSION !
 var security_KEY = "1234567890";

@@ -61,6 +61,11 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment:",
+            "OptionName": "AWS_REGION",
+            "Value": { "Ref" : "AWS::Region" }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment:",
             "OptionName": "S3_ACCESS_KEY",
             "Value": "AKIAJL5N6MKBEKM3BLNA"
           },
